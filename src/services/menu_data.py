@@ -11,16 +11,16 @@ class MenuData:
         # Conjunto para armazenar todos os pratos
         self.dishes = set()
 
-        # Dicionário temp para mapear nomes de pratos para instâncias de Dish
-        dish_map = {}
+        # Dicionário tempo para mapear nomes de pratos para instâncias de Dish
+        dish_name_to_instance = {}
 
         # Abrir o arquivo CSV para leitura
         with open(self.source_path, 'r', encoding='utf-8') as file:
             # Criar um leitor CSV baseado em dicionário
-            reader = csv.DictReader(file, delimiter=',')
+            csv_reader = csv.DictReader(file, delimiter=',')
 
             # Iterar pelas linhas do arquivo CSV
-            for row in reader:
+            for row in csv_reader:
                 # Extrair informações da linha
                 dish_name = row['dish']
                 price = float(row['price'])
@@ -28,18 +28,19 @@ class MenuData:
                 recipe_amount = int(row['recipe_amount'])
 
                 # Verificar se já criamos uma instância para este prato
-                if dish_name in dish_map:
-                    dish = dish_map[dish_name]
+                if dish_name in dish_name_to_instance:
+                    dish_instance = dish_name_to_instance[dish_name]
                 else:
                     # Se não, criar uma nova instância de Dish
-                    dish = Dish(dish_name, price)
+                    dish_instance = Dish(dish_name, price)
                     # Mapear o nome do prato para a instância
-                    dish_map[dish_name] = dish
+                    dish_name_to_instance[dish_name] = dish_instance
 
                 # Criar uma instância de Ingredient
-                ingredient = Ingredient(ingredient_name)
+                ingredient_instance = Ingredient(ingredient_name)
                 # Adicionar a dependência de ingrediente ao prato
-                dish.add_ingredient_dependency(ingredient, recipe_amount)
+                dish_instance.add_ingredient_dependency(
+                    ingredient_instance, recipe_amount)
 
                 # Adicionar o prato ao conjunto de pratos
-                self.dishes.add(dish)
+                self.dishes.add(dish_instance)
