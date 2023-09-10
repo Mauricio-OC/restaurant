@@ -29,15 +29,23 @@ class MenuBuilder:
         main_menu = []
 
         for dish in self.menu_data.dishes:
-            if not restriction or restriction not in dish.get_restrictions():
-                # Verificar se o prato não tem a restrição especificada
-                menu_item = {
-                    "dish_name": dish.name,
-                    "ingredients": [
-                     ingredient.name for ingredient in dish.get_ingredients()],
-                    "price": dish.price,
-                    "restrictions": [restriction.name for restriction in dish.get_restrictions()]
-                }
-                main_menu.append(menu_item)
+            if (
+                restriction is None
+                or restriction not in dish.get_restrictions()
+            ):
+                main_menu.append(
+                    {
+                        "dish_name": dish.name,
+                        "ingredients": list(
+                            dish.recipe.keys()
+                        ),
+                        "price": dish.price,
+                        "restrictions": [
+                            getattr(ingredient, "restriction", None)
+                            for ingredient in dish.recipe.keys()
+                            if hasattr(ingredient, "restriction")
+                        ],
+                    }
+                )
 
         return main_menu
